@@ -66,24 +66,17 @@ logRandomNumberAfterSeconds();
 // Асинхронна функція getDataFromUrl, яка приймає один параметр - URL
 // Використовуємо try для обробки помилок
 // Використовуємо fetch для відправки GET-запиту на вказаний URL
-
 // Перевіряємо через властивість ok, чи є відповідь вдалою якщо ні виводимо помилку в консоль
-
 // Конвертуємо відповідь у формат JSON
-
 // Виводимо дані в консоль
 // Виводимо помилки в консоль якщо вони є
-
 // Розкоментуйте після виконання завданння
 async function getDataFromUrl(URL) {
   try {
     const res = await fetch(URL, { method: "GET" }).then((res) => res.json());
     console.log(res);
-    // const data = res.ok;
-    // if (data === true) {
-    //   res.json();
-    // }
-    // console.log(res);
+    if (!res.ok) throw new Error(res.status);
+
   } catch (e) {
     console.log("Сталася помилка:", error);
   }
@@ -119,7 +112,8 @@ async function postDataWithAuth(url, data, authToken) {
     })
       .then((res) => res.json());
     console.log(res);
-  } catch (e) {
+    if (!res.ok) throw new Error(res.status);
+  } catch (error) {
     console.log("Сталася помилка:", error);
   }
 }
@@ -146,26 +140,17 @@ postDataWithAuth(
 // Цикл "while (true)" - це безкінечний цикл, який продовжуватиме виконуватися, поки його не зупинять зовні.
 // Чекаємо поки виконається проміс якому встановимо затримку 1 секунду за допомогою setTimeout
 // Віддаємо значення лічильника та збільшуємо його на один
+
+
 async function* asyncGenerator() {
   let i = 0;
-
-  // while (true) {
-  //   new Promise((resolve, reject) => {
-  //     setTimeout(() => i++, 1000);
-  //     yield i;
-  //     i++;
-  //   })
-  // }
-
-  await new Promise((resolve, reject) => {
-    setTimeout(() => {
-      while (true) {
-        resolve(i);
-        i++;
-      }
-    }, 1000)
-  })
+  while (true) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    yield i++;
+  }
 }
+
+
 // Використовуємо асинхронний генератор та записуємо його значення в константу gen
 
 const gen = asyncGenerator();
@@ -177,7 +162,6 @@ const gen = asyncGenerator();
 // Умова "if (value === 4) break" зупиняє цикл після виведення п'яти чисел (від 0 до 4).
 async function printFiveItems() {
   for await (const value of gen) {
-
     console.log(value);
     if (value === 4) break;
   }
@@ -185,7 +169,7 @@ async function printFiveItems() {
 
 // Розкоментуйте після виконання завданння
 console.log("Завдання: 5 ==============================");
-//printFiveItems();
+printFiveItems();
 
 //Завдання 6
 
@@ -278,12 +262,13 @@ console.log("Завдання: 7 ==============================");
 // Створюємо екземпляр генератора countdown з лічильниковм 5
 let countdown = countdownGenerator(5);
 // Запускаємо генератор та отримуємо перше значення яку записуємо в змінну nextValue
-let nextValue = countdown.next().value;
+let nextValue = countdown.next();
 // Цикл while, що виводить значення з генератора, та працює поки не є генератор вичерпаним.
 // Якщо властивість done == false, генератор ще має значення для повернення.
 while (!nextValue.done) {
   console.log(nextValue.value)
-  nextValue = countdown.next()
+  nextValue = countdown.next();
 }
 // Виводимо поточне значення
 // Отримуємо наступне значення з генератора
+
